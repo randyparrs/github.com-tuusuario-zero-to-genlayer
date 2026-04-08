@@ -1,38 +1,18 @@
 # { "Depends": "py-genlayer:test" }
 
-# ============================================================
-#  P2P Betting Platform — GenLayer Intelligent Contract
-#  Tutorial: From Zero to GenLayer
-#
-#  A trustless P2P betting platform where two parties bet
-#  on any real-world event. The contract fetches live web
-#  data and uses an LLM to determine the outcome via
-#  Optimistic Democracy consensus.
-#
-#  Requirements met:
-#    ✅ Optimistic Democracy consensus
-#    ✅ Equivalence Principle (gl.vm.run_nondet_unsafe)
-# ============================================================
-
 import json
 from genlayer import *
 
 
 class P2PBetting(gl.Contract):
 
-    # ── State ──────────────────────────────────────────────
-    owner: str
+    owner: Address
     bet_counter: u256
-    bet_data: DynArray[str]   # flat key:value storage "bet_{id}_{field}:value"
+    bet_data: DynArray[str]  # flat key:value storage "bet_{id}_{field}:value"
 
-    # ── Constructor ────────────────────────────────────────
-    def __init__(self, owner_address: str):
+    def __init__(self, owner_address: Address):
         self.owner = owner_address
         self.bet_counter = u256(0)
-
-    # ══════════════════════════════════════════════════════
-    #  READ FUNCTIONS
-    # ══════════════════════════════════════════════════════
 
     @gl.public.view
     def get_bet(self, bet_id: str) -> str:
@@ -56,18 +36,14 @@ class P2PBetting(gl.Contract):
     @gl.public.view
     def get_platform_summary(self) -> str:
         return (
-            f"=== P2P Betting Platform ===\n"
+            f"P2P Betting Platform\n"
             f"Total Bets: {int(self.bet_counter)}"
         )
-
-    # ══════════════════════════════════════════════════════
-    #  CREATE BET
-    # ══════════════════════════════════════════════════════
 
     @gl.public.write
     def create_bet(
         self,
-        opponent_address: str,
+        opponent_address: Address,
         event_description: str,
         creator_prediction: str,
         opponent_prediction: str,
@@ -77,7 +53,7 @@ class P2PBetting(gl.Contract):
         bet_id = str(int(self.bet_counter))
 
         self._set_field(bet_id, "creator", caller)
-        self._set_field(bet_id, "opponent", opponent_address)
+        self._set_field(bet_id, "opponent", str(opponent_address))
         self._set_field(bet_id, "event", event_description)
         self._set_field(bet_id, "creator_prediction", creator_prediction)
         self._set_field(bet_id, "opponent_prediction", opponent_prediction)
@@ -89,19 +65,8 @@ class P2PBetting(gl.Contract):
         self.bet_counter = u256(int(self.bet_counter) + 1)
         return f"Bet {bet_id} created! Event: {event_description}"
 
-    # ══════════════════════════════════════════════════════
-    #  RESOLVE BET — Equivalence Principle ✅
-    # ══════════════════════════════════════════════════════
-
     @gl.public.write
     def resolve_bet(self, bet_id: str) -> str:
-        """
-        Resolves a bet by:
-        1. Fetching live web data from the resolution URL
-        2. Using an LLM to determine the winner
-        3. Applying Equivalence Principle via run_nondet_unsafe
-           so multiple validators reach consensus ✅
-        """
         creator = self._get_field(bet_id, "creator")
         assert creator, "Bet not found"
         assert self._get_field(bet_id, "resolved") == "false", "Already resolved"
@@ -155,10 +120,6 @@ No extra text."""
             }, sort_keys=True)
 
         def validator_fn(leader_result) -> bool:
-            """
-            Validators independently fetch web data and re-run LLM.
-            Equivalent if winner_label matches exactly. ✅
-            """
             if not isinstance(leader_result, gl.vm.Return):
                 return False
             try:
@@ -191,10 +152,6 @@ No extra text."""
             f"Winner: {winner_label} ({winner_address}). "
             f"Reasoning: {reasoning}"
         )
-
-    # ══════════════════════════════════════════════════════
-    #  INTERNAL HELPERS
-    # ══════════════════════════════════════════════════════
 
     def _get_field(self, bet_id: str, field: str) -> str:
         key = f"bet_{bet_id}_{field}:"
