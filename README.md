@@ -1,4 +1,4 @@
-# From Zero to GenLayer: Building a P2P Betting Platform
+<img width="1234" height="205" alt="image" src="https://github.com/user-attachments/assets/f11dfe16-91ba-427e-931f-4113b5935ab7" /># From Zero to GenLayer: Building a P2P Betting Platform
 
 A complete hands-on tutorial that takes you from zero blockchain knowledge to deploying a fully functional decentralized P2P betting dApp on GenLayer, the first Intelligent Blockchain.
 
@@ -104,6 +104,8 @@ Set opponent_address to your Studio address, event_description to Who won the 20
 Step 2: resolve_bet with bet_id set to 0.
 
 Step 3: get_bet with bet_id set to 0 to see the result showing Resolved true, Winner creator, and the reasoning confirming Argentina.
+
+Note: the contract in this repository uses the Address type in the constructor as required by genvm-lint. When deploying in GenLayer Studio use a version that receives str in the constructor and converts internally with Address(owner_address) since Studio requires primitive types to parse the contract schema correctly.
 
 ---
 
