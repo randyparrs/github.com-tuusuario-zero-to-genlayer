@@ -95,6 +95,8 @@ result = gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
 
 Go to GenLayer Studio at https://studio.genlayer.com and create a new file called p2p_betting.py. Paste the contract code from contracts/p2p_betting.py. Set execution mode to Normal Full Consensus. Deploy with your Studio address as owner_address.
 
+Note: the contract in this repository uses the Address type in the constructor as required by genvm-lint. When deploying in GenLayer Studio use a version that receives str in the constructor and converts internally with Address(owner_address) since Studio requires primitive types to parse the contract schema correctly.
+
 ### Create and Resolve a Bet
 
 Step 1: create_bet
