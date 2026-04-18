@@ -1,4 +1,4 @@
-<img width="1234" height="205" alt="image" src="https://github.com/user-attachments/assets/f11dfe16-91ba-427e-931f-4113b5935ab7" /># From Zero to GenLayer: Building a P2P Betting Platform
+# From Zero to GenLayer: Building a P2P Betting Platform
 
 A complete hands-on tutorial that takes you from zero blockchain knowledge to deploying a fully functional decentralized P2P betting dApp on GenLayer, the first Intelligent Blockchain.
 
